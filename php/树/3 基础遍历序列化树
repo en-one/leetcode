@@ -1,0 +1,138 @@
+### 基础遍历序列化树
+
+- 前序序列化树
+
+```php
+function serialize($root) {
+        if ($root == null) {
+            return '#';
+        }
+        $rootV = $root->val;
+        $left = $this->serialize($root->left);
+        $right = $this->serialize($root->right);
+        return $rootV . ',' . $left . ',' . $right;
+    }
+  
+    /**
+     * @param String $data
+     * @return TreeNode
+     */
+    function deserialize($data)
+    {
+        $dataArray = explode(',', $data);
+        return $this->preorder($dataArray);
+    }
+    private function preorder(&$dataArray) {
+        $value = array_shift($dataArray);
+        if ($value == '#') {
+            return null;
+        }
+        $head = new TreeNode($value."");
+        $head->left = $this->preorder($dataArray);
+        $head->right = $this->preorder($dataArray);
+        return $head;
+    }
+```
+
+
+
+- 中序序列化树
+
+```
+中序遍历不可以
+```
+
+
+
+- 后序序列化树
+
+```php
+function serialize($root) {
+        if ($root == null) {
+            return '#';
+        }
+        $left = $this->serialize($root->left);
+        $right = $this->serialize($root->right);
+        $rootV = $root->val;
+
+        return $left . ',' . $right . ',' . $rootV;
+    }
+  
+    /**
+     * @param String $data
+     * @return TreeNode
+     */
+    function deserialize($data)
+    {
+        $dataArray = explode(',', $data);
+        $reverse=array_reverse($dataArray);
+        return $this->preorder($reverse);
+    }
+
+
+    private function preorder(&$dataArray) {
+        $value = array_shift($dataArray);
+        if ($value == '#') {
+            return null;
+        }
+        $head = new TreeNode($value."");
+        $head->right = $this->preorder($dataArray);
+        $head->left = $this->preorder($dataArray);
+        return $head;
+    }
+```
+
+
+
+- 层序序列化树
+
+```php
+function serialize($root) {
+        if ($root == null) return '';
+        $arr = $res = [];
+        array_push($arr, $root);
+        while (count($arr)) {
+            $node = array_shift($arr);
+            if ($node->val === null) { //三等于
+                $res[] = '#';
+            }else {
+                $res[] =(string)$node->val;
+                array_push($arr, $node->left);
+                array_push($arr, $node->right);
+            }
+        }
+        return implode(',', $res);
+    }
+  
+    /**
+     * @param String $data
+     * @return TreeNode
+     */
+    function deserialize($data)
+    {
+       if (strlen($data) == 0) return null;
+
+        $dataArray = explode(',', $data);
+        $root = new TreeNode($dataArray[0]);
+
+        $arr[] = $root;
+        $cur = 1;
+        while (count($arr)) {
+            $node = array_shift($arr);
+            if ($dataArray[$cur] != '#') {
+                $node->left = new TreeNode($dataArray[$cur]);
+                array_push($arr, $node->left);
+            }
+            $cur++;
+
+            if ($dataArray[$cur] != '#') {
+                $node->right = new TreeNode($dataArray[$cur]);;
+                array_push($arr, $node->right);
+            }
+            $cur++;
+        }
+        return $root;
+
+    }
+```
+
